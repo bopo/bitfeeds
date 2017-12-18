@@ -1,14 +1,14 @@
 #!/bin/python
 
 import unittest
-from util import Logger
-from kdbplus_client import KdbPlusClient
+from bitfeeds.util import Logger
+from bitfeeds.storage.kdbplus import KdbPlusClient
 
-class SqliteClientTest(unittest.TestCase):
+class KdbPlusClientTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.db_client = KdbPlusClient()
-        cls.db_client.connect(host='localhost', port=5000)
+        cls.db_storage = KdbPlusClient()
+        cls.db_storage.connect(host='localhost', port=5000)
 
     @classmethod
     def tearDownClass(cls):
@@ -20,27 +20,30 @@ class SqliteClientTest(unittest.TestCase):
         types = ['int', 'text', 'text', 'text', 'decimal(10,5)']
 
         # Check table creation
-        self.assertTrue(self.db_client.create(table_name, columns, types, [0], is_ifnotexists=False))
+        self.assertTrue(self.db_storage.create(table_name, columns, types, [0], is_ifnotexists=False))
 
         # Check table insertion
-        self.assertTrue(self.db_client.insert(
+        self.assertTrue(self.db_storage.insert(
             table_name,
             columns,
+            types,
             [1,'20161026','10:00:00.000000','AbC',10.3]))
-        self.assertTrue(self.db_client.insert(
+        self.assertTrue(self.db_storage.insert(
             table_name,
             columns,
+            types,
             [2,'20161026','10:00:01.000000','AbCD',10.4]))
-        self.assertTrue(self.db_client.insert(
+        self.assertTrue(self.db_storage.insert(
             table_name,
             columns,
+            types,
             [3,'20161026','10:00:02.000000','Efgh',10.5]))
 
         # Check table "IF NOT EXISTS" condition
-        self.assertTrue(self.db_client.create(table_name, columns, types))
+        self.assertTrue(self.db_storage.create(table_name, columns, types))
 
         # Fetch the whole table
-        row = self.db_client.select(table=table_name)
+        row = self.db_storage.select(table=table_name)
         self.assertEqual(len(row), 3)
         self.assertEqual(row[0][0], 1)
         self.assertEqual(row[0][1], "20161026")
@@ -59,7 +62,7 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[2][4], 10.5)
 
         # Fetch with condition
-        row = self.db_client.select(table=table_name, condition="k=2")
+        row = self.db_storage.select(table=table_name, condition="k=2")
         self.assertEqual(len(row), 1)
         self.assertEqual(row[0][0], 2)
         self.assertEqual(row[0][1], "20161026")
@@ -68,7 +71,7 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[0][4], 10.4)
 
         # Fetch with ordering
-        row = self.db_client.select(table=table_name, orderby="k desc")
+        row = self.db_storage.select(table=table_name, orderby="k desc")
         self.assertEqual(len(row), 3)
         self.assertEqual(row[2][0], 1)
         self.assertEqual(row[2][1], "20161026")
@@ -87,7 +90,7 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[0][4], 10.5)
 
         # Fetch with limit
-        row = self.db_client.select(table=table_name, limit=1)
+        row = self.db_storage.select(table=table_name, limit=1)
         self.assertEqual(len(row), 1)
         self.assertEqual(row[0][0], 1)
         self.assertEqual(row[0][1], "20161026")
@@ -96,14 +99,15 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[0][4], 10.3)
 
         # Check table insertion or replacement
-        self.assertTrue(self.db_client.insert(
+        self.assertTrue(self.db_storage.insert(
             table_name,
             columns,
+            types,
             [2,'20161026','10:00:04.000000','NoNoNo',10.5],
             True))
 
         # Fetch the whole table
-        row = self.db_client.select(table=table_name)
+        row = self.db_storage.select(table=table_name)
         self.assertEqual(len(row), 3)
         self.assertEqual(row[0][0], 1)
         self.assertEqual(row[0][1], "20161026")
@@ -122,7 +126,7 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[2][4], 10.5)
 
         # Fetch the whole table for some columns
-        row = self.db_client.select(table=table_name, columns=[columns[0]]+[columns[1]])
+        row = self.db_storage.select(table=table_name, columns=[columns[0]]+[columns[1]])
         self.assertEqual(len(row), 3)
         self.assertEqual(row[0][0], 1)
         self.assertEqual(row[0][1], "20161026")
@@ -132,12 +136,10 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[2][1], "20161026")
 
         # Delete a row from the table
-        self.db_client.delete(
-            table_name,
-            "k=2")
+        self.db_storage.delete(table_name, "k=2")
 
         # Fetch the whole table
-        row = self.db_client.select(table=table_name)
+        row = self.db_storage.select(table=table_name)
         self.assertEqual(len(row), 2)
         self.assertEqual(row[0][0], 1)
         self.assertEqual(row[0][1], "20161026")
@@ -151,9 +153,9 @@ class SqliteClientTest(unittest.TestCase):
         self.assertEqual(row[1][4], 10.5)
 
         # Delete remaining rows from the table
-        self.db_client.delete(table_name)
+        self.db_storage.delete(table_name)
         # Fetch the whole table
-        row = self.db_client.select(table=table_name)
+        row = self.db_storage.select(table=table_name)
         self.assertEqual(len(row), 0)
 
 if __name__ == '__main__':

@@ -1,8 +1,5 @@
-<p align="center">
-  <img src="doc/icon.jpg">
-</p>
-
-# BitcoinExchangeFH - Bitcoin exchange market data feed handler
+BitcoinExchangeFH - Bitcoin exchange market data feed handler
+===============
 
 BitcoinExchangeFH is a slim application to record the price depth and trades in various exchanges. You can set it up quickly and record the all the exchange data in a few minutes!
 
@@ -15,15 +12,9 @@ Users can
 
 ### MySQL
 
-<p align="center">
-  <img src="doc/sample.jpg">
-</p>
 
 ### Kdb+
 
-<p align="center">
-  <img src="doc/sample2.jpg">
-</p>
 
 ## Supported exchanges
 
@@ -46,7 +37,7 @@ Users can
 
 Currently the support of other exchanges is still under development.
 
-## Supported database/channel
+## Supported Storage
 
 - ZeroMQ
 - Kdb+
@@ -59,14 +50,14 @@ Currently the support of other exchanges is still under development.
 It is highly recommended to use pip for installing python dependence. 
 
 ```
-pip install bitcoinexchangefh
+pip install bitfeeds
 ```
 
 If your operation system has pythons with version 2 and 3, please specify
 pip3 for python 3 installation.
 
 ```
-pip3 install bitcoinexchangefh
+pip3 install bitfeeds
 ```
 
 ### Destination
@@ -82,7 +73,7 @@ You can open a TCP or inter-process traffic.
 For example, if you decide the data feed is subscribed at 127.0.0.1 at port 6001.
 
 ```
-bitcoinexchangefh -zmq -zmqdest "tcp://127.0.0.1:6001" -instmts subscription.ini
+bitfeeds -zmq -zmqdest "tcp://127.0.0.1:6001" -instmts subscription.ini
 ```
 
 According to [zmq-tcp](http://api.zeromq.org/2-1:zmq-tcp), please provide "127.0.0.1"
@@ -91,7 +82,7 @@ instead of "localhost" as the local machine destination.
 If the data feed is subscribed via inter-process shared memory with address "bitcoin".
 
 ```
-bitcoinexchangefh -zmq -zmqdest "ipc://bitcoin" -instmts subscription.ini
+bitfeeds -zmq -zmqdest "ipc://bitcoin" -instmts subscription.ini
 ```
 
 #### Sqlite
@@ -101,7 +92,7 @@ No further setup is required. Just define the output sqlite file.
 For example, to record the data to default sqlite file "bitcoinexchange.raw", run the command
 
 ```
-bitcoinexchangefh -sqlite -sqlitepath bitcoinexchangefh.sqlite -instmts subscription.ini
+bitfeeds -sqlite -sqlitepath bitfeeds.sqlite -instmts subscription.ini
 ```
 
 #### Kdb+
@@ -117,7 +108,7 @@ Then connect to the database with dedicated port (for example 5000 in the exampl
 For example connecting to localhost at port 5000, run the command
 
 ```
-bitcoinexchangefh -kdb -kdbdest "localhost:5000" -instmts subscription.ini
+bitfeeds -kdb -kdbdest "localhost:5000" -instmts subscription.ini
 ```
 
 #### MySQL
@@ -134,7 +125,7 @@ SELECT
 For example connecting to localhost with user "bitcoin", password "bitcoin" and schema "bcex", run the command
 
 ```
-bitcoinexchangefh -mysql -mysqldest "bitcoin:bitcoin@localhost:3306" -mysqlschema bcex -instmts subscription.ini
+bitfeeds -mysql -mysqldest "bitcoin:bitcoin@localhost:3306" -mysqlschema bcex -instmts subscription.ini
 ```
 
 #### CSV
@@ -144,7 +135,7 @@ No further setup is required. Just define the output folder path.
 For example to a folder named "data", you can run the following command.
 
 ```
-bitcoinexchangefh -csv -csvpath data/ -instmts subscription.ini
+bitfeeds -csv -csvpath data/ -instmts subscription.ini
 ```
 
 ### Multiple destination
@@ -154,7 +145,7 @@ Bitcoinexchangefh supports multiple destinations.
 For example, if you store the market data into the database and, at the same time, publish the data through ZeroMQ publisher, you can run the command
 
 ```
-bitcoinexchangefh -zmq -zmqdest "tcp://localhost:6001" -kdb -kdbdest "localhost:5000" -instmts subscription.ini
+bitfeeds -zmq -zmqdest "tcp://localhost:6001" -kdb -kdbdest "localhost:5000" -instmts subscription.ini
 ```
 
 ### Arguments
@@ -169,7 +160,7 @@ bitcoinexchangefh -zmq -zmqdest "tcp://localhost:6001" -kdb -kdbdest "localhost:
 |kdb|Use Kdb+ database.|
 |kdbdest|Kdb+ database destination. Formatted as "address:port", e.g. "127.0.0.1:5000".|
 |sqlite|Use SQLite database.|
-|sqlitepath|SQLite database file path, e.g. "bitcoinexchangefh.sqlite".|
+|sqlitepath|SQLite database file path, e.g. "bitfeeds.sqlite".|
 |mysql|Use MySQL.|
 |mysqldest|MySQL database destination. Formatted as "username:password@address:host", e.g. "peter:Password123@127.0.0.1:3306".|
 |csv|Use CSV file as database.|
