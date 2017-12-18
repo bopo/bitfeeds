@@ -9,3 +9,4 @@ _windows/*
 inspection/*
 .env/*
 *.egg-info/*
+.cache/
