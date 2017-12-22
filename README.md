@@ -1,7 +1,7 @@
-BitcoinExchangeFH - Bitcoin exchange market data feed handler
+BitFeeds - Bitcoin exchange market data feed handler
 ===============
 
-BitcoinExchangeFH is a slim application to record the price depth and trades in various exchanges. You can set it up quickly and record the all the exchange data in a few minutes!
+BitFeeds is a slim application to record the price depth and trades in various exchanges. You can set it up quickly and record the all the exchange data in a few minutes!
 
 Users can
 
@@ -66,7 +66,7 @@ pip3 install bitfeeds
 
 You can write your application to receive the market data via ZeroMQ socket.
 
-BitcoinExchangeFH acts as a publisher in the 
+BitFeeds acts as a publisher in the 
 [Publish/Subscibe](http://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/patterns/pubsub.html) model.
 You can open a TCP or inter-process traffic.
 
@@ -97,7 +97,7 @@ bitfeeds -sqlite -sqlitepath bitfeeds.sqlite -instmts subscription.ini
 
 #### Kdb+
 
-First, start your Kdb+ database. You can either choose your own binary or the binary in the [third-party](https://github.com/gavincyi/BitcoinExchangeFH/tree/master/third-party) folder.
+First, start your Kdb+ database. You can either choose your own binary or the binary in the [third-party](https://github.com/bopo/BitFeeds/tree/master/third-party) folder.
 
 ```
 q -p 5000
@@ -224,7 +224,7 @@ where parameter `instmt_code` is the exchange API instrument code.
 
 ## Inquiries
 
-You can first look up to the page [FAQ](https://github.com/gavincyi/BitcoinExchangeFH/wiki/FAQ). For more inquiries, you can either leave it in issues or drop me an email. I will get you back as soon as possible.
+You can first look up to the page [FAQ](https://github.com/bopo/BitFeeds/wiki/FAQ). For more inquiries, you can either leave it in issues or drop me an email. I will get you back as soon as possible.
 
 ## Compatibility
 The application is compatible with version higher or equal to python 3.0.
@@ -232,7 +232,7 @@ The application is compatible with version higher or equal to python 3.0.
 ## Contributions
 Always welcome for any contribution. Please fork the project, make the changes, and submit the merge request. :)
 
-For any questions and comment, please feel free to contact me through email (gavincyi at gmail)
+For any questions and comment, please feel free to contact me through email (bopo at gmail)
 
 Your comment will be a huge contribution to the project!
 
