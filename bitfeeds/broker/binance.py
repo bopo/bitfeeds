@@ -270,7 +270,7 @@ if __name__ == '__main__':
     instmt_code = 'LTCBTC'
     instmt = Instrument(exchange_name, instmt_name, instmt_code)    
     db_storage = SqlStorageTemplate()
-    exch = ExchGwBinance([db_storage])
+    exch = BinanceGateway([db_storage])
     instmt.set_l2_depth(L2Depth(5))
     instmt.set_prev_l2_depth(L2Depth(5))
     instmt.set_recovered(False)    

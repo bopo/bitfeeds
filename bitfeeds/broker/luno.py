@@ -1,4 +1,4 @@
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -24,7 +24,7 @@ from datetime import datetime
 # https://github.com/Aurora-Team/BitcoinExchangeFH/wiki/Development-Guide-WebSocket
 
 
-class LunoBroker(WebSocketApiClient):
+class LunoBroker(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -33,7 +33,7 @@ class LunoBroker(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'Luno')
+        WebSocketApiSocket.__init__(self, 'Luno')
         # self.get_order_book()
         self.local_order_book = None
 
@@ -217,7 +217,7 @@ class LunoBroker(WebSocketApiClient):
         return trade
 
 
-class ExchGwLuno(ExchangeGateway):
+class LunoGateway(ExchangeGateway):
     """
     Exchange gateway
     """
@@ -227,7 +227,7 @@ class ExchGwLuno(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwApiLuno(), db_storages)
+        ExchangeGateway.__init__(self, LunoBroker(), db_storages)
         self.order_book = None
 
     @classmethod
@@ -333,5 +333,5 @@ if __name__ == '__main__':
     instmt = Instrument(exchange_name, instmt_name, instmt_code)
     db_storage = SqlStorageTemplate()
     Logger.init_log()
-    exch = ExchGwLuno([db_storage])
+    exch = LunoGateway([db_storage])
     td = exch.start(instmt)

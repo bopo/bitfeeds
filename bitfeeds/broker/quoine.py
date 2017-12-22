@@ -183,7 +183,7 @@ class QuoineBroker(RESTfulApiSocket):
         return trades
 
 
-class ExchGwQuoine(ExchangeGateway):
+class QuoineGateway(ExchangeGateway):
     # static variable to control to request rate
     last_query_time_lock = threading.Lock()
     last_query_time = datetime.now()
@@ -197,7 +197,7 @@ class ExchGwQuoine(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwApiQuoine(), db_storages)
+        ExchangeGateway.__init__(self, QuoineBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -213,12 +213,12 @@ class ExchGwQuoine(ExchangeGateway):
         :param instmt: Instrument
         """
         while True:
-            ExchGwQuoine.last_query_time_lock.acquire()
-            if datetime.now() - ExchGwQuoine.last_query_time < timedelta(seconds=ExchGwQuoine.waiting_seconds):
-                ExchGwQuoine.last_query_time_lock.release()
+            QuoineGateway.last_query_time_lock.acquire()
+            if datetime.now() - QuoineGateway.last_query_time < timedelta(seconds=QuoineGateway.waiting_seconds):
+                QuoineGateway.last_query_time_lock.release()
                 time.sleep(random.uniform(0, 1))
             else:
-                ExchGwQuoine.last_query_time = datetime.now()
+                QuoineGateway.last_query_time = datetime.now()
                 try:
                     l2_depth = self.api_socket.get_order_book(instmt)
                     if l2_depth is not None and l2_depth.is_diff(instmt.get_l2_depth()):
@@ -228,7 +228,7 @@ class ExchGwQuoine(ExchangeGateway):
                         self.insert_order_book(instmt)
                 except Exception as e:
                     Logger.error(self.__class__.__name__, "Error in order book: %s" % e)
-                ExchGwQuoine.last_query_time_lock.release()
+                QuoineGateway.last_query_time_lock.release()
 
     def get_trades_worker(self, instmt):
         """
@@ -236,16 +236,16 @@ class ExchGwQuoine(ExchangeGateway):
         :param instmt: Instrument name
         """
         while True:
-            ExchGwQuoine.last_query_time_lock.acquire()
-            if datetime.now() - ExchGwQuoine.last_query_time < timedelta(seconds=ExchGwQuoine.waiting_seconds):
-                ExchGwQuoine.last_query_time_lock.release()
+            QuoineGateway.last_query_time_lock.acquire()
+            if datetime.now() - QuoineGateway.last_query_time < timedelta(seconds=QuoineGateway.waiting_seconds):
+                QuoineGateway.last_query_time_lock.release()
                 time.sleep(random.uniform(0, 1))
             else:
-                ExchGwQuoine.last_query_time = datetime.now()
+                QuoineGateway.last_query_time = datetime.now()
                 try:
                     ret = self.api_socket.get_trades(instmt)
                     if ret is None or len(ret) == 0:
-                        ExchGwQuoine.last_query_time_lock.release()
+                        QuoineGateway.last_query_time_lock.release()
                         continue
 
                     for trade in ret:
@@ -265,7 +265,7 @@ class ExchGwQuoine(ExchangeGateway):
                 except Exception as e:
                     Logger.error(self.__class__.__name__, "Error in trades: %s" % e)
 
-                ExchGwQuoine.last_query_time_lock.release()
+                QuoineGateway.last_query_time_lock.release()
 
     def start(self, instmt):
         """
@@ -293,7 +293,7 @@ if __name__ == '__main__':
     instmt_code = '1'
     instmt = Instrument(exchange_name, instmt_name, instmt_code)    
     db_storage = SqlStorageTemplate()
-    exch = ExchGwQuoine([db_storage])
+    exch = QuoineGateway([db_storage])
     instmt.set_l2_depth(L2Depth(5))
     instmt.set_prev_l2_depth(L2Depth(5))
     instmt.set_order_book_table_name(exch.get_order_book_table_name(instmt.get_exchange_name(),

@@ -1,5 +1,5 @@
 from bitfeeds.restful_api_socket import RESTfulApiSocket
-from bitfeeds.ws_api_socket import WebSocketApiClient
+from bitfeeds.ws_api_socket import WebSocketApiSocket
 from bitfeeds.market_data import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -99,7 +99,7 @@ class GdaxBroker(RESTfulApiSocket):
         raise Exception("get_trades should not be called.")    
         
 
-class ExchGwApiGdaxTrades(WebSocketApiClient):
+class ExchGwApiGdaxTrades(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -107,7 +107,7 @@ class ExchGwApiGdaxTrades(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'Gdax')
+        WebSocketApiSocket.__init__(self, 'Gdax')
         
     @classmethod
     def get_trades_timestamp_field_name(cls):

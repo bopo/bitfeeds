@@ -176,7 +176,7 @@ class BittrexBroker(RESTfulApiSocket):
         return trades
 
 
-class ExchGwBittrex(ExchangeGateway):
+class BittrexGateway(ExchangeGateway):
     """
     Exchange gateway Bittrex
     """
@@ -185,7 +185,7 @@ class ExchGwBittrex(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwApiBittrex(), db_storages)
+        ExchangeGateway.__init__(self, BittrexBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -268,7 +268,7 @@ if __name__ == '__main__':
     instmt_code = 'BTC-ETH'
     instmt = Instrument(exchange_name, instmt_name, instmt_code)    
     db_storage = SqlStorageTemplate()
-    exch = ExchGwBittrex([db_storage])
+    exch = BittrexGateway([db_storage])
     instmt.set_l2_depth(L2Depth(5))
     instmt.set_prev_l2_depth(L2Depth(5))
     instmt.set_recovered(False)    

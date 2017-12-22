@@ -1,4 +1,4 @@
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -11,7 +11,7 @@ from functools import partial
 from datetime import datetime
 
 
-class BitmexBroker(WebSocketApiClient):
+class BitmexBroker(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -19,7 +19,7 @@ class BitmexBroker(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'BitmexBroker')
+        WebSocketApiSocket.__init__(self, 'BitmexBroker')
         
     @classmethod
     def get_order_book_timestamp_field_name(cls):
@@ -173,7 +173,7 @@ class BitmexBroker(WebSocketApiClient):
         return trade        
 
 
-class ExchGwBitmex(ExchangeGateway):
+class BitmexGateway(ExchangeGateway):
     """
     Exchange gateway
     """
@@ -182,7 +182,7 @@ class ExchGwBitmex(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwBitmexWs(), db_storages)
+        ExchangeGateway.__init__(self, BitmexBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -273,5 +273,5 @@ if __name__ == '__main__':
     instmt = Instrument(exchange_name, instmt_name, instmt_code)
     db_storage = SqlStorageTemplate()
     Logger.init_log()
-    exch = ExchGwBitmex([db_storage])
+    exch = BitmexGateway([db_storage])
     td = exch.start(instmt)    

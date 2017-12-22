@@ -1,4 +1,4 @@
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -11,7 +11,7 @@ from functools import partial
 from datetime import datetime
 
 
-class WebSocketApiTemplate(WebSocketApiClient):
+class WebSocketApiTemplate(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -19,7 +19,7 @@ class WebSocketApiTemplate(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'Template')
+        WebSocketApiSocket.__init__(self, 'Template')
         
     @classmethod
     def get_order_book_timestamp_field_name(cls):

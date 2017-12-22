@@ -178,7 +178,7 @@ class CryptopiaBroker(RESTfulApiSocket):
         return trades
 
 
-class ExchGwCryptopia(ExchangeGateway):
+class CryptopiaGateway(ExchangeGateway):
     """
     Exchange gateway
     """
@@ -187,7 +187,7 @@ class ExchGwCryptopia(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwApiCryptopia(), db_storages)
+        ExchangeGateway.__init__(self, CryptopiaBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -269,7 +269,7 @@ if __name__ == '__main__':
     instmt_code = 'DOT_BTC'
     instmt = Instrument(exchange_name, instmt_name, instmt_code)    
     db_storage = SqlStorageTemplate()
-    exch = ExchGwCryptopia([db_storage])
+    exch = CryptopiaGateway([db_storage])
     instmt.set_l2_depth(L2Depth(5))
     instmt.set_prev_l2_depth(L2Depth(5))
     instmt.set_recovered(False)    

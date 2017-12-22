@@ -1,4 +1,4 @@
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -12,7 +12,7 @@ from functools import partial
 from datetime import datetime
 
 
-class HuobiBroker(WebSocketApiClient):
+class HuobiBroker(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -20,7 +20,7 @@ class HuobiBroker(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'HuobiBroker')
+        WebSocketApiSocket.__init__(self, 'HuobiBroker')
         
     @classmethod
     def get_order_book_timestamp_field_name(cls):
@@ -105,7 +105,7 @@ class HuobiBroker(WebSocketApiClient):
         return trade
 
 
-class ExchGwOkCoin(ExchangeGateway):
+class HuobiGateway(ExchangeGateway):
     """
     Exchange gateway
     """
@@ -114,7 +114,7 @@ class ExchGwOkCoin(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwOkCoinWs(), db_storages)
+        ExchangeGateway.__init__(self, HuobiBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -122,7 +122,7 @@ class ExchGwOkCoin(ExchangeGateway):
         Get exchange name
         :return: Exchange name string
         """
-        return 'OkCoin'
+        return 'Huobi'
 
     def on_open_handler(self, instmt, ws):
         """

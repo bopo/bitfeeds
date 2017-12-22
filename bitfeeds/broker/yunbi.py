@@ -176,7 +176,7 @@ class YunbiBroker(RESTfulApiSocket):
         return trades
 
 
-class ExchGwYunbi(ExchangeGateway):
+class YunbiGateway(ExchangeGateway):
     """
     Exchange gateway
     """
@@ -185,7 +185,7 @@ class ExchGwYunbi(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwApiYunbi(), db_storages)
+        ExchangeGateway.__init__(self, YunbiBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -268,7 +268,7 @@ if __name__ == '__main__':
     instmt_code = 'ethcny'
     instmt = Instrument(exchange_name, instmt_name, instmt_code)    
     db_storage = SqlStorageTemplate()
-    exch = ExchGwYunbi([db_storage])
+    exch = YunbiGateway([db_storage])
     instmt.set_l2_depth(L2Depth(5))
     instmt.set_prev_l2_depth(L2Depth(5))
     instmt.set_recovered(False)    

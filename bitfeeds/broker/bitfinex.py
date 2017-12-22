@@ -1,8 +1,9 @@
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.util import Logger
+from bitfeeds.storage.sql_template import SqlStorageTemplate
 
 import threading
 import time
@@ -12,7 +13,7 @@ from functools import partial
 from datetime import datetime
 
 
-class BitfinexBroker(WebSocketApiClient):
+class BitfinexBroker(WebSocketApiSocket):
     """
     Exchange gateway BTCC WebSocketApi
     """
@@ -20,7 +21,7 @@ class BitfinexBroker(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'BitfinexBroker')
+        WebSocketApiSocket.__init__(self, 'BitfinexBroker')
             
     @classmethod
     def get_link(cls):
@@ -158,7 +159,7 @@ class BitfinexBroker(WebSocketApiClient):
         return trade
 
 
-class ExchGwBitfinex(ExchangeGateway):
+class BitfinexGateway(ExchangeGateway):
     """
     Exchange gateway BTCC
     """
@@ -167,7 +168,7 @@ class ExchGwBitfinex(ExchangeGateway):
         Constructor
         :param db_storage: Database storage
         """
-        ExchangeGateway.__init__(self, ExchGwBitfinexWs(), db_storages)
+        ExchangeGateway.__init__(self, BitfinexBroker(), db_storages)
 
     @classmethod
     def get_exchange_name(cls):
@@ -276,3 +277,13 @@ class ExchGwBitfinex(ExchangeGateway):
                                         on_open_handler=partial(self.on_open_handler, instmt),
                                         on_close_handler=partial(self.on_close_handler, instmt))]
 
+
+if __name__ == '__main__':
+    exchange_name = 'Bitfinex'
+    instmt_name = 'BTCUSD'
+    instmt_code = ''
+    instmt = Instrument(exchange_name, instmt_name, instmt_code)
+    db_storage = SqlStorageTemplate()
+    Logger.init_log()
+    exch = BitfinexGateway([db_storage])
+    td = exch.start(instmt)

@@ -1,4 +1,4 @@
-from bitfeeds.socket.wss import WebSocketApiClient
+from bitfeeds.socket.wss import WebSocketApiSocket
 from bitfeeds.market import L2Depth, Trade
 from bitfeeds.exchange import ExchangeGateway
 from bitfeeds.instrument import Instrument
@@ -12,7 +12,7 @@ from functools import partial
 from datetime import datetime
 
 
-class OKExBroker(WebSocketApiClient):
+class OKExBroker(WebSocketApiSocket):
     """
     Exchange socket
     """
@@ -20,7 +20,7 @@ class OKExBroker(WebSocketApiClient):
         """
         Constructor
         """
-        WebSocketApiClient.__init__(self, 'OKExBroker')
+        WebSocketApiSocket.__init__(self, 'OKExBroker')
         
     @classmethod
     def get_order_book_timestamp_field_name(cls):
@@ -55,6 +55,7 @@ class OKExBroker(WebSocketApiClient):
         """
         l2_depth = instmt.get_l2_depth()
         keys = list(raw.keys())
+
         if cls.get_order_book_timestamp_field_name() in keys and \
            cls.get_bids_field_name() in keys and \
            cls.get_asks_field_name() in keys:
@@ -66,6 +67,7 @@ class OKExBroker(WebSocketApiClient):
             # Bids
             bids = raw[cls.get_bids_field_name()]
             bids = sorted(bids, key=lambda x: x[0], reverse=True)
+            
             for i in range(0, len(bids)):
                 l2_depth.bids[i].price = float(bids[i][0]) if type(bids[i][0]) != float else bids[i][0]
                 l2_depth.bids[i].volume = float(bids[i][1]) if type(bids[i][1]) != float else bids[i][1]   
@@ -73,6 +75,7 @@ class OKExBroker(WebSocketApiClient):
             # Asks
             asks = raw[cls.get_asks_field_name()]
             asks = sorted(asks, key=lambda x: x[0])
+            
             for i in range(0, len(asks)):
                 l2_depth.asks[i].price = float(asks[i][0]) if type(asks[i][0]) != float else asks[i][0]
                 l2_depth.asks[i].volume = float(asks[i][1]) if type(asks[i][1]) != float else asks[i][1]            
@@ -122,7 +125,7 @@ class ExchGwOkCoin(ExchangeGateway):
         Get exchange name
         :return: Exchange name string
         """
-        return 'OkCoin'
+        return 'OKEx'
 
     def on_open_handler(self, instmt, ws):
         """
@@ -151,6 +154,7 @@ class ExchGwOkCoin(ExchangeGateway):
 
             ws.send(self.api_socket.get_order_book_subscription_string(instmt))
             ws.send(self.api_socket.get_trades_subscription_string(instmt))
+            
             instmt.set_subscribed(True)
 
     def on_close_handler(self, instmt, ws):
